@@ -627,8 +627,8 @@ export class SmartExtractor {
       if (updatedEntry) {
         const meta = parseSmartMetadata(updatedEntry.metadata, updatedEntry);
         const supportInfo = parseSupportInfo(meta.support_info);
-        updateSupportStats(supportInfo, contextLabel, "support");
-        const finalMetadata = stringifySmartMetadata({ ...meta, support_info: supportInfo });
+        const updated = updateSupportStats(supportInfo, contextLabel, "support");
+        const finalMetadata = stringifySmartMetadata({ ...meta, support_info: updated });
         await this.store.update(matchId, { metadata: finalMetadata }, scopeFilter);
       }
     } catch {
