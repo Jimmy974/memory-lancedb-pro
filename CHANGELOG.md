@@ -1,5 +1,90 @@
 # Changelog
 
+## 1.1.0-beta.2 (Smart Memory Beta + Access Reinforcement)
+
+This is a **beta** release published under the npm dist-tag **`beta`** (it does not affect the stable `latest` channel).
+
+Highlights:
+- **Smart Extraction (LLM-powered)**: 6-category extraction with L0/L1/L2 metadata (falls back to regex capture when disabled or init fails)
+- **Lifecycle scoring integrated into retrieval**: decay-based score adjustment + tier floors
+- **Tier transitions (best-effort)**: bounded metadata write-backs for top results (tier / access stats)
+- **Access reinforcement for time decay**: frequently *manually recalled* memories decay more slowly (spaced-repetition style)
+  - Adds `AccessTracker` with debounced metadata write-back (accessCount / lastAccessedAt)
+  - Adds retrieval config: `reinforcementFactor` (default: 0.5) and `maxHalfLifeMultiplier` (default: 3)
+
+Notes:
+- Access reinforcement is gated to manual recall (`source: \"manual\"`) to avoid auto-recall strengthening noise.
+
+---
+
+## 1.1.0-beta.1 (Smart Memory Beta)
+
+- Initial beta with Smart Extraction + lifecycle components (decay engine + tier manager)
+
+---
+
+## 1.0.26
+
+**Access Reinforcement for Time Decay**
+
+- **Feat**: Access reinforcement — frequently *manually recalled* memories decay more slowly (spaced-repetition style)
+- **New**: `AccessTracker` with debounced metadata write-back (records accessCount / lastAccessedAt)
+- **New**: Config options under `retrieval`: `reinforcementFactor` (default: 0.5) and `maxHalfLifeMultiplier` (default: 3)
+- **New**: `MemoryStore.getById()` pure-read helper for efficient metadata lookup
+
+PR: #37
+
+Breaking changes: None. Backward compatible (set `reinforcementFactor: 0` to disable).
+
+---
+
+
+## 1.0.22
+
+**Storage Path Validation & Better Error Messages**
+
+- **Fix**: Validate `dbPath` at startup — resolve symlinks, auto-create missing directories, check write permissions (#26, #27)
+- **Fix**: Write/connection failures now include `errno`, resolved path, and actionable fix suggestions instead of generic errors (#28)
+- **New**: Exported `validateStoragePath()` utility for external tooling and diagnostics
+
+Breaking changes: None. Backward compatible.
+
+---
+
+## 1.0.21
+
+**Long Context Chunking**
+
+- **Feats**: Added automatic chunking for documents exceeding embedding context limits
+- **Feats**: Smart semantic-aware chunking at sentence boundaries with configurable overlap
+- **Feats**: Chunking adapts to different embedding model context limits (Jina, OpenAI, Gemini, etc.)
+- **Feats**: Parallel chunk embedding with averaged result for better semantic preservation
+- **Fixes**: Handles "Input length exceeds context length" errors gracefully
+- **Docs**: Added comprehensive documentation in docs/long-context-chunking.md
+
+Breaking changes: None. Backward compatible with existing configurations.
+
+---
+
+## 1.0.20
+
+- Fix: reduce auto-capture noise by skipping memory-management prompts (delete/forget/cleanup memory entries).
+- Improve: broaden English decision triggers so statements like "we decided / going forward we will use" are captured as decisions.
+
+## 1.0.19
+
+- UX: show memory IDs in `memory-pro list` and `memory-pro search` output, so users can delete entries without switching to JSON.
+- UX: include IDs in agent tool outputs (`memory_recall`, `memory_list`) for easier debugging and `memory_forget` follow-ups.
+
+## 1.0.18
+
+- Fix: sync `openclaw.plugin.json` version with `package.json`, so the OpenClaw plugin info shows the correct version.
+
+## 1.0.17
+
+- Fix: adaptive-retrieval now strips OpenClaw-injected timestamp prefixes like `[Mon YYYY-MM-DD HH:MM ...] ...` to avoid skewing length-based heuristics.
+- Improve: expanded SKIP/FORCE keyword patterns with Traditional Chinese variants.
+
 ## 1.0.16
 
 - Feat: expand memory capture triggers to support Traditional Chinese (繁體中文) in addition to Simplified Chinese, and improve category detection keywords.
